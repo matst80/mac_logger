@@ -1,58 +1,99 @@
 <html>
-<script src="/socket.io/socket.io.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <style>
+        li {
+            background: #1abc9c;
+            color: #fff;
+            margin: 4px;
+            border-radius: 3px;
+            width: 300px;
+            transition: all 0.3s;
+        }
+        
+        span {
+            display: inline-block;
+            padding: 5px;
+        }
+        
+        .selected {
+            background: #9b59b6;
+        }
+        
+        .changed {
+            background: #3498db;
+        }
+    </style>
+</head>
+
 <body>
-<style>
-	li {
-		background: #1abc9c;
-		color:#fff;
-		margin:4px;
-		border-radius:3px;
-		width:300px;
-		transition: all 0.3s;
-	}
-	span {
-		display: inline-block;
-		padding:5px;
-	}
-	.selected {
-		background: #9b59b6;
-	}
-	.changed {
-		background:#3498db;
-	}
-</style>
-<ul id="sklep"></ul>
-<script>
-  var socket = io();
-  socket.on('macs', function(msg){
-    //console.log(msg);
-    var prt = $('#sklep');
-    //prt.find('.changed').removeClass('changed');
-    $.each(msg,function(i,v) {
-    	var inner = '<span class="sig">'+v.sig+'</span> <span class="mac">'+v.mac+'</span>';
-    	var itm = $('li[data-mac="'+v.mac+'"]');
-    	if (itm && itm.length) {
-    		itm.html(inner);
-    		var lastsig = itm.data('lastsig');
-    		if (lastsig!=v.sig) {
-    			itm.addClass('changed').data('lastsig',v.sig);
-    			setTimeout(function() {
-    				itm.removeClass('changed');
-    			},100);
-    		}
-    		
-    		if (v.dead) {
-    			itm.remove();
-    		}
-    	}
-    	else {
-    		if (!v.dead) {
-    			$('<li data-mac="'+v.mac+'" />').data('lastsig',v.sig).html(inner).appendTo(prt).click(function() {$(this).toggleClass('selected');});
-    		}
-    	}
-    });
-  });
-</script>
-<body>
+    <ul id="sklep"></ul>
+    <script>
+        var maclist = {
+            '00:cd:fe:de:50:59': 'KHphone',
+            '98:ff:d0:76:65:a7': 'android-930893c165883a1b',
+            '48:51:b7:a2:16:4c': 'DESKTOP-ECG16VT',
+            '5c:0a:5b:b6:fe:b1': 'android-1293cdd58cb01c68',
+            '28:10:7b:2d:c7:26': 'DCS-933L',
+            'b8:27:eb:5d:e2:a0': 'raspberrypi',
+            '38:b1:db:a6:16:55': 'Jontes',
+            'c0:bd:d1:e7:b5:8d': 'android-2bd089280d410710',
+            'f0:f6:1c:ba:f7:19': 'Thereses-iPad',
+            'dc:d9:16:99:8c:c4': 'android-14c0b072b40ee3fe',
+            'f0:27:65:16:41:92': 'android-76313438ef9abc43',
+            '40:b8:37:0b:26:e9': 'android-466703879ecc1a12',
+            '60:01:94:03:7b:02': 'ESP_037B02',
+            'c8:33:4b:53:50:f1': 'iPhone',
+            '5c:cf:7f:05:fc:ac': 'ESP_05FCAC',
+            '28:6a:ba:0b:81:7d': 'mattans-iPad',
+            'b0:c5:54:2d:84:01': 'DCS-930LB',
+            '70:3e:ac:db:8a:15': 'Annas-telefon',
+            '68:9c:70:0d:84:2f': 'iPad',
+            '60:c5:47:54:a6:da': 'Hakans-iPhone',
+            'c0:ee:fb:d1:25:95': 'android-9a313b7d29d2e6b6',
+            'b8:27:eb:20:44:93': 'octopi',
+            '00:01:38:f3:39:02': 'sip_tv',
+            '50:65:f3:75:16:41': 'HP751641',
+            'a8:fa:d8:4b:d0:78': 'Annas-iPad',
+            '00:1b:21:7c:b7:27': 'DESKTOP-9CFLHPU',
+            '6c:ad:f8:31:bb:96': 'Chromecast',
+            'b8:27:eb:0d:d9:0e': 'homepi'
+        };
+        var socket = io();
+        socket.on('macs', function(msg) {
+            //console.log(msg);
+            var prt = $('#sklep');
+            //prt.find('.changed').removeClass('changed');
+            $.each(msg, function(i, v) {
+                var inner = '<span class="sig">' + v.sig + '</span> <span class="mac">' + v.mac + '</span>';
+                var m = maclist[v.mac.toLocaleLowerCase()];
+                if (m) {
+                    inner += '<span class="dev_name">' + m + '</span>';
+                }
+                var itm = $('li[data-mac="' + v.mac + '"]');
+                if (itm && itm.length) {
+                    itm.html(inner);
+                    var lastsig = itm.data('lastsig');
+                    if (lastsig != v.sig) {
+                        itm.addClass('changed').data('lastsig', v.sig);
+                        setTimeout(function() {
+                            itm.removeClass('changed');
+                        }, 100);
+                    }
+                    if (v.dead) {
+                        itm.remove();
+                    }
+                } else {
+                    if (!v.dead) {
+                        $('<li data-mac="' + v.mac + '" />').data('lastsig', v.sig).html(inner).appendTo(prt).click(function() {
+                            $(this).toggleClass('selected');
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+    <body>
 </html>
