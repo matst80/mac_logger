@@ -1,0 +1,58 @@
+<html>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<body>
+<style>
+	li {
+		background: #1abc9c;
+		color:#fff;
+		margin:4px;
+		border-radius:3px;
+		width:300px;
+		transition: all 0.3s;
+	}
+	span {
+		display: inline-block;
+		padding:5px;
+	}
+	.selected {
+		background: #9b59b6;
+	}
+	.changed {
+		background:#3498db;
+	}
+</style>
+<ul id="sklep"></ul>
+<script>
+  var socket = io();
+  socket.on('macs', function(msg){
+    //console.log(msg);
+    var prt = $('#sklep');
+    //prt.find('.changed').removeClass('changed');
+    $.each(msg,function(i,v) {
+    	var inner = '<span class="sig">'+v.sig+'</span> <span class="mac">'+v.mac+'</span>';
+    	var itm = $('li[data-mac="'+v.mac+'"]');
+    	if (itm && itm.length) {
+    		itm.html(inner);
+    		var lastsig = itm.data('lastsig');
+    		if (lastsig!=v.sig) {
+    			itm.addClass('changed').data('lastsig',v.sig);
+    			setTimeout(function() {
+    				itm.removeClass('changed');
+    			},100);
+    		}
+    		
+    		if (v.dead) {
+    			itm.remove();
+    		}
+    	}
+    	else {
+    		if (!v.dead) {
+    			$('<li data-mac="'+v.mac+'" />').data('lastsig',v.sig).html(inner).appendTo(prt).click(function() {$(this).toggleClass('selected');});
+    		}
+    	}
+    });
+  });
+</script>
+<body>
+</html>
