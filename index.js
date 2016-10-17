@@ -52,7 +52,7 @@ function addmac(val, sig) {
             if (!listofmac[i].dead) {
                 console.log('remove stale mac');
                 listofmac[i].dead = true;
-                client.publish('/smarthome/clientmac/' + listofmac[i].mac, 'OFF');
+                client.publish('/smarthome/clientmac/' + (listofmac[i].mac), 'OFF');
             }
         }
     }
@@ -70,8 +70,8 @@ port.on('open', function() {
             //console.log(sp);
             var sig = sp[0].substring(3);
             if (sp[2] && sp[2].length == 'AE:09:E3:28:26:43'.length)
-                addmac(sp[2].toLowerCase(), sig);
-            //addmac(sp[2]);
+                addmac(sp[2].toLowerCase().replace(/\:/igm, ''), sig);
+            //addmac(sp[2]);%
         }
         //console.log(data.subtr(33,50));
         //data.toString('utf8',33,50)
