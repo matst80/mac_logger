@@ -8,18 +8,6 @@ var mysql = require('mysql2');
 
 var connection = mysql.createConnection({host:'10.10.10.1', user: 'webdoc', password: 'kaninbur', database:'macdb'});
 
-// app.get('/', function(req, res){
-//   res.sendfile('index.html');
-// });
-
-// io.on('connection', function(socket){
-//   console.log('a user connected');
-// });
-
-// http.listen(3000, function(){
-//   console.log('listening on *:3000');
-// });
-
 var SerialPort = require("serialport");
 
 var port = new SerialPort("COM5", {
